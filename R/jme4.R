@@ -9,7 +9,7 @@
 jme4 <- function(formula, data, family = NULL){
 
   # Initiate julia
-  j <- JuliaCall::julia_setup()
+  j <- suppressMessages(JuliaCall::julia_setup())
   j$install_package_if_needed("MixedModels")
   j$install_package_if_needed("DataFrames")
   j$install_package_if_needed("JellyMe4")
@@ -28,12 +28,18 @@ jme4 <- function(formula, data, family = NULL){
     command <- glue::glue("myfit = fit(MixedModel, @formula({chr_form}), data)")
   }else{
     if(family == "binomial") family <- "Bernoulli"
+    if(family == "poisson") family <- "Poisson"
     command <- glue::glue("myfit = fit(MixedModel, @formula({chr_form}), data, {family}())")
   }
 
   j$eval(command, need_return = "Julia")
   j$library("JellyMe4")
+  if(is.null(family)){
   model <- j$eval("robject(:lmerMod, Tuple([myfit,data]))", need_return="R")
+  }else{
+    model <- j$eval("robject(:glmerMod, Tuple([myfit,data]))", need_return="R")
+  }
+
   model
 
 }
