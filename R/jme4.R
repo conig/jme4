@@ -20,7 +20,7 @@ form_to_char <- function(fm){
 #' @export
 
 jme4 <- function(formula, data, family = NULL){
-
+  call <- match.call()
   if(methods::is(formula, "formula")) formula <- form_to_char(formula)
 
   # Initiate julia
@@ -54,7 +54,7 @@ jme4 <- function(formula, data, family = NULL){
   }else{
   model <- j$eval("robject(:glmerMod, Tuple([myfit,data]))", need_return="R")
   }
-  model@call$data <- as.name(data)
+  model@call$data <- call$data
   model
 
 }
