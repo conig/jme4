@@ -52,9 +52,9 @@ jme4 <- function(formula, data, family = NULL){
   if(is.null(family)){
   model <- j$eval("robject(:lmerMod, Tuple([myfit,data]))", need_return="R")
   }else{
-    model <- j$eval("robject(:glmerMod, Tuple([myfit,data]))", need_return="R")
+  model <- j$eval("robject(:glmerMod, Tuple([myfit,data]))", need_return="R")
   }
-
+  model@call$data <- as.name(data)
   model
 
 }
