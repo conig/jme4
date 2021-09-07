@@ -1,3 +1,16 @@
+#' form_to_char
+#'
+#' Convert formula to character
+#' @param fm a formula
+
+form_to_char <- function(fm){
+  x <- as.character(fm)
+  outcome = x[2]
+  if(length(x) < 3) outcome = ""
+  pred = x[length(x)]
+  glue::glue("{outcome} ~ {pred}")
+}
+
 #' jme4
 #'
 #' Fit a mixed model using julia
@@ -7,6 +20,8 @@
 #' @export
 
 jme4 <- function(formula, data, family = NULL){
+
+  if(methods::is(formula, "formula")) formula <- form_to_char(formula)
 
   # Initiate julia
   j <- suppressMessages(JuliaCall::julia_setup())
